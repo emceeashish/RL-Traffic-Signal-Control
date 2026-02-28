@@ -1,6 +1,6 @@
 # 🚦 Smart Traffic Signal Control with Emergency Vehicle Prioritization
 
-> **Reinforcement Learning meets real-world traffic** — an AI that learns to manage traffic lights *and* clears the way for ambulances, fire trucks, and police cars. Built on top of [SUMO-RL](https://github.com/LucasAlegre/sumo-rl) and powered by PPO.
+> **Reinforcement Learning meets real world traffic** an AI that learns to manage traffic lights *and* clears the way for ambulances, fire trucks, and police cars. Built on top of [SUMO RL](https://github.com/LucasAlegre/sumo-rl) and powered by PPO.
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python&logoColor=white)
 ![PyTorch](https://img.shields.io/badge/PyTorch-GPU_Accelerated-EE4C2C?logo=pytorch&logoColor=white)
@@ -15,14 +15,14 @@
 
 ## What is This?
 
-Traditional traffic lights run on dumb fixed timers — they don't care if 50 cars are stuck on one side while the other road is empty, and they definitely don't care if an ambulance is screaming through an intersection.
+Traditional traffic lights run on dumb fixed timers, they don't care if 50 cars are stuck on one side while the other road is empty, and they definitely don't care if an ambulance is screaming through an intersection.
 
 This project fixes that. I built an **AI agent using Proximal Policy Optimization (PPO)** that:
 
 - **Watches the traffic** in real time through lane density, queue lengths, and per lane waiting times
 - **Detects emergency vehicles** on approach and learns to prioritize them with massive reward signals  
 - **Decides when to switch lights** to minimize overall waiting time while keeping intersections flowing smoothly
-- **Scales to multi intersection grids** — trained on a 4×4 grid (16 intersections, 16 agents sharing one brain) using RLlib
+- **Scales to multi intersection grids** trained on a 4×4 grid (16 intersections, 16 agents sharing one brain) using RLlib
 
 The agent was trained from scratch up to **500,000 timesteps** and compared against a fixed time baseline at every milestone (100k, 200k, 300k, 400k, 500k). Spoiler: the AI crushes the baseline.
 
@@ -34,7 +34,7 @@ Here's what's in the repo and why:
 
 ```
 .
-├── sumo_rl/                          # Core library (forked from SUMO-RL)
+├── sumo_rl/                          # Core library (forked from SUMO RL)
 │   ├── environment/
 │   │   ├── env.py                    # Gymnasium + PettingZoo environment wrappers
 │   │   ├── traffic_signal.py         # TraCI powered traffic signal controller
@@ -44,11 +44,11 @@ Here's what's in the repo and why:
 │   │   ├── project_observation.py    # Extended observation with wait times + emergency flags
 │   │   └── project_reward.py         # Multi component reward function (the secret sauce)
 │   ├── agents/
-│   │   └── ql_agent.py               # Tabular Q-learning agent
+│   │   └── ql_agent.py               # Tabular Q learning agent
 │   ├── exploration/
 │   │   └── epsilon_greedy.py         # Epsilon greedy exploration strategy
 │   ├── nets/                         # SUMO network & route files
-│   │   ├── 2way-single-intersection/ # Simple 2-way intersection
+│   │   ├── 2way-single-intersection/ # Simple 2 way intersection
 │   │   ├── RESCO/grid4x4/            # 4×4 grid (16 intersections) from RESCO benchmarks
 │   │   └── ...                       # More network configs
 │   └── util/
@@ -58,7 +58,7 @@ Here's what's in the repo and why:
 ├── train_rllib_grid4x4_emergency.py  # Multi agent PPO training on 4×4 grid (RLlib + Ray)
 ├── run_baseline.py                   # Fixed time traffic light baseline simulation
 ├── generate_results.py               # Run trained model & export metrics to CSV
-├── watch_agent.py                    # Visualize single-intersection agent in SUMO GUI
+├── watch_agent.py                    # Visualize single intersection agent in SUMO GUI
 ├── watch_grid4x4_emergency.py        # Visualize 4×4 grid agent in SUMO GUI + save CSV
 ├── plot_final_graph.py               # Plot evolution graph: baseline vs all training milestones
 ├── test.py                           # Sanity check (GPU + SUMO environment)
@@ -66,7 +66,7 @@ Here's what's in the repo and why:
 ├── models/                           # Saved model weights (PPO checkpoints)
 ├── outputs/                          # Evaluation CSVs + result plots
 ├── results/                          # AI performance CSV from generate_results.py
-├── generated_routes/                 # Auto-generated emergency vehicle route files
+├── generated_routes/                 # Auto generated emergency vehicle route files
 ├── experiments/                      # Example scripts (Q learning, SARSA, DQN, PPO)
 ├── docs/                             # Documentation source files
 ├── tests/                            # Unit tests (Gymnasium & PettingZoo)
@@ -83,12 +83,12 @@ The agent doesn't just see a basic phase + density vector. I extended the defaul
 
 | Feature | Description |
 |---|---|
-| Phase (one-hot) | Which green phase is currently active |
+| Phase (one hot) | Which green phase is currently active |
 | Min green flag | Has the minimum green time elapsed? (prevents rapid flickering) |
 | Lane density | How packed is each incoming lane (0 to 1) |
 | Lane queue | Fraction of stopped vehicles per lane |
 | Lane waiting time | Normalized accumulated waiting time per lane (capped at 60s) |
-| 🚨 Emergency flags | Binary flag per lane — is an ambulance/fire truck approaching? |
+| 🚨 Emergency flags | Binary flag per lane, is an ambulance/fire truck approaching? |
 
 This is implemented in [`sumo_rl/custom/project_observation.py`](sumo_rl/custom/project_observation.py). The emergency detection uses the TraCI API to check vehicle types in real time.
 
@@ -112,7 +112,7 @@ R = w_wait × (reduced_wait)
 | `w_starve` | 0.01 | Prevents any single lane from being completely ignored |
 | `w_emergency` | **10.0** | Huge bonus when an emergency vehicle is near the intersection |
 
-The emergency weight (10.0) is intentionally massive — it teaches the agent that clearing the path for an ambulance is 10x more important than anything else happening at that intersection.
+The emergency weight (10.0) is intentionally massive, it teaches the agent that clearing the path for an ambulance is 10x more important than anything else happening at that intersection.
 
 Implemented in [`sumo_rl/custom/project_reward.py`](sumo_rl/custom/project_reward.py).
 
@@ -138,7 +138,7 @@ Implemented in [`sumo_rl/custom/project_reward.py`](sumo_rl/custom/project_rewar
 ### Prerequisites
 
 - **Python 3.9+**
-- **SUMO** (Simulation of Urban Mobility) — [install guide](https://sumo.dlr.de/docs/Installing/index.html)
+- **SUMO** (Simulation of Urban Mobility) [install guide](https://sumo.dlr.de/docs/Installing/index.html)
 - **CUDA capable GPU** (recommended for training, not required for evaluation)
 
 ### 1. Install SUMO
@@ -316,7 +316,7 @@ The `experiments/` folder has additional ready to run scripts for different algo
 | `sumo_rl/custom/project_observation.py` | Extended observation with emergency vehicle detection |
 | `sumo_rl/custom/project_reward.py` | Multi component reward function with configurable weights |
 | `sumo_rl/environment/env.py` | Core Gymnasium/PettingZoo environment (SumoEnvironment) |
-| `sumo_rl/environment/traffic_signal.py` | TraCI-powered traffic signal logic |
+| `sumo_rl/environment/traffic_signal.py` | TraCI powered traffic signal logic |
 | `train.py` | Single agent training script |
 | `train_rllib_grid4x4_emergency.py` | Multi agent training with checkpoint resume |
 | `run_baseline.py` | Fixed time baseline simulation |
@@ -388,7 +388,7 @@ env = gym.make('sumo-rl-v0',
 
 ## Acknowledgements
 
-This project is a fork of [SUMO-RL](https://github.com/LucasAlegre/sumo-rl) by [Lucas N. Alegre](https://github.com/LucasAlegre). The original library provides the Gymnasium/PettingZoo environment wrapper and TraCI integration for traffic signal control.
+This project is a fork of [SUMO RL](https://github.com/LucasAlegre/sumo-rl) by [Lucas N. Alegre](https://github.com/LucasAlegre). The original library provides the Gymnasium/PettingZoo environment wrapper and TraCI integration for traffic signal control.
 
 If you use this work, please also cite the original:
 
