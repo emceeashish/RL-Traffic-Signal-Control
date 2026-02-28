@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <vType id="emergency" vClass="emergency" accel="2.6" decel="4.5" sigma="0.5"
+           length="5.0" minGap="2.5" maxSpeed="25" color="1,0,0" guiShape="emergency"/>
+    <route id="em_route_lr" edges="left0A0 A0B0 B0C0 C0D0 D0right0"/>
+    <flow id="flow_emg" type="emergency" route="em_route_lr"
+          begin="0" end="3600" period="300"
+          departLane="best" departSpeed="max"/>
+</routes>
